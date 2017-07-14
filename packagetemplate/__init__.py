@@ -49,6 +49,16 @@ _log.addHandler(logging.NullHandler())
 LOG_DATEFMT = "%Y-%m-%d %H:%M:%S"
 LOG_FMT = "%(asctime)s.%(msecs)03d [%(levelname)-8s] %(message)s [%(name)s]"
 
+# logging levels
+LOG_LEVELS = {
+    50: 'CRITICAL',
+    40: 'ERROR',
+    30: 'WARNING',
+    20: 'INFO',
+    10: 'DEBUG',
+     0: 'NOTSET',
+}
+
 
 class TemplateModuleError(Exception):
     """
@@ -87,13 +97,15 @@ def log_config(level=logging.DEBUG,
 
     reset_filename_level = False
     if not isinstance(filename_level, int):
+        if filename_level is not None:
+            reset_filename_level = True
         filename_level = level
-        reset_filename_level = True
 
     reset_std_level = False
     if not isinstance(std_level, int):
+        if std_level is not None:
+            reset_std_level = True
         std_level = level
-        reset_std_level = True
 
     # setup root logger
     logger_root = logging.getLogger()
@@ -112,7 +124,7 @@ def log_config(level=logging.DEBUG,
     # setup std handler
     if std:
         handler_console = logging.StreamHandler()
-        handler_console.setLevel(level)
+        handler_console.setLevel(std_level)
         handler_console.setFormatter(formatter)
         logger_root.addHandler(handler_console)
 
@@ -123,9 +135,9 @@ def log_config(level=logging.DEBUG,
     if reset_level:
         logger_root.warn("Invalid logging level, reset to DEBUG")
     if reset_filename_level:
-        logger_root.warn("Invalid file logging level, reset to DEBUG")
+        logger_root.warn("Invalid file logging level, reset to {l}".format(l=LOG_LEVELS.get(level, level)))
     if reset_std_level:
-        logger_root.warn("Invalid std logging level, reset to DEBUG")
+        logger_root.warn("Invalid std logging level, reset to {l}".format(l=LOG_LEVELS.get(level, level)))
     if filename is None:
         logger_root.info("No log file will be saved")
     if not std:
@@ -188,10 +200,5 @@ def log_trace(exception, level=logging.ERROR, log=_log, output_fmt='std'):
     except Exception as e:
         message = "Trace not generated for: '{x}'; ERROR: '{r}'".format(x=str(exception), r=str(e))
         log.error(message)
-
-    # clean-up trace retrieval
-    finally:
-        # avoid circular reference, per docs
-        del exc_traceback
 
     return message

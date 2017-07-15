@@ -38,12 +38,26 @@ Template with basic functionality for new Python projects: main package
 import sys
 import logging
 import traceback
+import warnings
 
 # get logger for this module
 _log = logging.getLogger(__name__)
 
 # 'no-op' handler in case no logging setup is done
 _log.addHandler(logging.NullHandler())
+
+# capture messages from warning module into logs
+logging.captureWarnings(True)
+
+# customize showwarning to get py.warnings to be logged instead of printed and
+# to avoid new line characters in log
+def format_warning(message, category, filename, lineno, file=None, line=None):
+    logger_pywarnings = logging.getLogger('py.warnings')
+    if not logger_pywarnings.handlers:
+        logger_pywarnings.addHandler(logging.NullHandler())
+    msg = warnings.formatwarning(message, category, filename, lineno, line).replace('\n', ' ').replace('\r', ' ')
+    logger_pywarnings.warning(msg)
+warnings.showwarning = format_warning
 
 # logging default formats
 LOG_DATEFMT = "%Y-%m-%d %H:%M:%S"

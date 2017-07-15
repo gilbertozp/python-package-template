@@ -37,6 +37,7 @@ Template with basic functionality for new Python projects: module
 """
 import sys
 import logging
+import warnings
 
 from packagetemplate import TemplateModuleError, log_config, log_trace
 
@@ -71,6 +72,8 @@ if __name__ == '__main__':
 
     # configure logging facilities (stderr and/or file)
     log_config(std=True)
+
+    warnings.warn('This is a test warning', Warning)
 
     # save traceback from exception to log before
     # printing out traceback and exiting

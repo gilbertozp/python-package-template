@@ -35,6 +35,17 @@ Template with basic functionality for new Python projects: main package
 @contact: gzpastorello@lbl.gov
 @date: 2017-07-12
 """
+
+__author__ = "Gilberto Pastorello"
+__copyright__ = "Copyright 2017, Gilberto Pastorello"
+__credits__ = ["Gilberto Pastorello <gzpastorello@lbl.gov>",
+               ]
+__maintainer__ = "Gilberto Pastorello"
+__email__ = "gzpastorello@lbl.gov"
+__license__ = "BSD"
+__status__ = "Development"
+__version__ = "0.0.1a1"
+
 import sys
 import logging
 import traceback
@@ -46,11 +57,8 @@ _log = logging.getLogger(__name__)
 # 'no-op' handler in case no logging setup is done
 _log.addHandler(logging.NullHandler())
 
-# capture messages from warning module into logs
-logging.captureWarnings(True)
-
-# customize showwarning to get py.warnings to be logged instead of printed and
-# to avoid new line characters in log
+# customize showwarning to get py.warnings to be logged instead of printed;
+# removes new line characters in log
 def format_warning(message, category, filename, lineno, file=None, line=None):
     logger_pywarnings = logging.getLogger('py.warnings')
     if not logger_pywarnings.handlers:

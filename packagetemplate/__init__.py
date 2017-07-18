@@ -59,13 +59,13 @@ _log.addHandler(logging.NullHandler())
 
 # customize showwarning to get py.warnings to be logged instead of printed;
 # removes new line characters in log
-def format_warning(message, category, filename, lineno, file=None, line=None):
+def _format_warning(message, category, filename, lineno, file=None, line=None):
     logger_pywarnings = logging.getLogger('py.warnings')
     if not logger_pywarnings.handlers:
         logger_pywarnings.addHandler(logging.NullHandler())
     msg = warnings.formatwarning(message, category, filename, lineno, line).replace('\n', ' ').replace('\r', ' ')
     logger_pywarnings.warning(msg)
-warnings.showwarning = format_warning
+warnings.showwarning = _format_warning
 
 # logging default formats
 LOG_DATEFMT = "%Y-%m-%d %H:%M:%S"
